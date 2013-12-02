@@ -1,0 +1,313 @@
+VERSION 5.00
+Begin VB.MDIForm GraphPlotter 
+   BackColor       =   &H8000000C&
+   Caption         =   "Graph Plotter"
+   ClientHeight    =   8820
+   ClientLeft      =   225
+   ClientTop       =   555
+   ClientWidth     =   15510
+   LinkTopic       =   "MDIForm1"
+   Begin VB.Menu mnu 
+      Caption         =   "&Open folder"
+      Index           =   0
+   End
+   Begin VB.Menu mnu 
+      Caption         =   "&View"
+      Index           =   1
+      Begin VB.Menu view 
+         Caption         =   "&Gas Data"
+         Index           =   0
+      End
+      Begin VB.Menu view 
+         Caption         =   "&Acceleration Data"
+         Index           =   1
+      End
+      Begin VB.Menu view 
+         Caption         =   "&Light Data"
+         Index           =   2
+      End
+      Begin VB.Menu view 
+         Caption         =   "&Temperature/Humidity Data"
+         Index           =   3
+      End
+      Begin VB.Menu view 
+         Caption         =   "&Sound Level Data"
+         Index           =   4
+      End
+   End
+   Begin VB.Menu mnu 
+      Caption         =   "&Exit"
+      Index           =   2
+   End
+End
+Attribute VB_Name = "GraphPlotter"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
+Option Explicit
+
+
+'''''''''''''''''''''''''''''CODE FOR BROWSE FOLDER START
+
+Private Declare Function SHBrowseForFolder Lib "shell32" (lpbi As BrowseInfo) As Long
+Private Declare Function lstrcat Lib "kernel32" Alias "lstrcatA" (ByVal lpString1 As String, ByVal lpString2 As String) As Long
+
+Private Declare Function SHGetPathFromIDList Lib "shell32" (ByVal pidList As Long, ByVal lpBuffer As String) As Long
+
+
+Private Const BIF_STATUSTEXT = &H4&
+Private Const BIF_RETURNONLYFSDIRS = 1
+Private Const BIF_DONTGOBELOWDOMAIN = 2
+Private Const MAX_PATH = 260
+Private Const INVALID_HANDLE_VALUE = -1
+
+Private Type BrowseInfo
+  hwndOwner      As Long
+  pIDLRoot       As Long
+  pszDisplayName As Long
+  lpszTitle      As Long
+  ulFlags        As Long
+  lpfnCallback   As Long
+  lParam         As Long
+  iImage         As Long
+End Type
+
+
+
+
+Public Function BrowseForFolder() As String
+  'Opens a Treeview control that displays the directories in a computer
+  Dim lpIDList As Long
+  Dim szTitle As String
+  Dim sBuffer As String
+  Dim tBrowseInfo As BrowseInfo
+  szTitle = "Select a folder:"
+  With tBrowseInfo
+    .hwndOwner = 0&
+    .lpszTitle = lstrcat(szTitle, "")
+    .ulFlags = BIF_RETURNONLYFSDIRS + BIF_DONTGOBELOWDOMAIN + BIF_STATUSTEXT
+    End With
+    
+    lpIDList = SHBrowseForFolder(tBrowseInfo)
+    If (lpIDList) Then
+        sBuffer = Space(MAX_PATH)
+        SHGetPathFromIDList lpIDList, sBuffer
+        sBuffer = Left(sBuffer, InStr(sBuffer, vbNullChar) - 1)
+        '//mLastFolder = mCurrentFolder
+        '//mCurrentFolder = sBuffer
+        BrowseForFolder = sBuffer
+    End If
+End Function
+
+''''''''''''''''''''''''''''''''''CODE FOR BROWSE FOLDER END
+
+
+
+Public Function AllFiles(ByVal DirPath As String) As String()
+'***************************************************
+'PURPOSE: RETURN AN ARRAY CONTAINING NAME OF ALL FILES IN
+'DIRECTORY SPECIFIED BY DIR PATH
+
+'PARAMETER:
+
+  'DIRPATH: A VALID DRIVE OR SUBDIRECTORY ON YOUR SYSTEM,
+  'ENDING WITH FORWARD SLASH (\) CHARACTER, OR
+  'A DRIVE OR SUBDIRECTORY FOLLOWED BY A WILD CARD
+  'STRING (e.g., C:\WINDOWS\*.txt)
+
+'RETURNS: A STRING ARRAY WITH THE NAMES OF ALL FILENAMES
+'IN THE DIRECTORY, INCLUDING HIDDEN, SYSTEM, AND READ-ONLY FILES
+'THE FUNCTION IS NON RECURSIVE, I.E., IT DOES NOT SEARCH
+'SUBDIRECTORIES UNDERNEATH DIRPATH
+
+'REQUIRES: VB6, BECAUSE IT RETURNS A STRING ARRAY
+
+'EXAMPLE
+'Dim sFiles() As String
+'Dim lCtr As Long
+
+'sFiles = AllFiles("C:\windows\")
+'For lCtr = 0 To UBound(sFiles)
+'    Debug.Print sFiles(lCtr)
+'Next
+'********************************************************
+
+Dim sFile As String
+Dim lElement As Long
+Dim sAns() As String
+ReDim sAns(0) As String
+
+sFile = Dir(DirPath, vbNormal + vbHidden + vbReadOnly + _
+   vbSystem + vbArchive)
+If sFile <> "" Then
+sAns(0) = sFile
+    Do
+        sFile = Dir
+        If sFile = "" Then Exit Do
+        lElement = IIf(sAns(0) = "", 0, UBound(sAns) + 1)
+        ReDim Preserve sAns(lElement) As String
+        sAns(lElement) = sFile
+    Loop
+End If
+AllFiles = sAns
+End Function
+
+
+
+
+Private Sub mnu_Click(Index As Integer)
+
+    Select Case Index
+        Case 0 'OpenFolder
+            'common.folderLoc = BrowseForFolder
+            'common.folderLoc = common.folderLoc & "\"
+            common.folderLoc = "C:\Users\abhinav\Desktop\latestdata\21\"
+            common.theFiles = AllFiles(common.folderLoc)
+            common.no_of_files = UBound(common.theFiles)
+            ReDim common.filesData(common.no_of_files) As common.TheFile
+            
+            Dim i As Integer
+            For i = 0 To common.no_of_files
+                readFiles (i)
+            Next i
+        Case 1
+        Case 2 'exit
+            End
+    End Select
+
+End Sub
+
+
+
+Private Sub readFiles(file_no As Integer)
+    Dim file_name As String
+    Dim fnum As Integer
+    Dim whole_file As String
+    Dim all_lines As Variant
+    Dim lines() As String
+    Dim one_line As Variant
+    Dim R As Long
+    Dim C As Long
+    Dim num_rows As Long
+    Dim num_cols As Long
+
+    file_name = common.folderLoc & common.theFiles(file_no)
+
+    ' Load the file.
+    fnum = FreeFile
+    Open file_name For Input As fnum
+    whole_file = Input$(LOF(fnum), #fnum)
+    Close fnum
+
+    ' Break the file into lines.
+    all_lines = Split(whole_file, vbCrLf)
+    
+    
+    Dim X As Integer
+    X = 0
+    
+    'Debug.Print TypeName(lines)
+    ReDim lines(UBound(all_lines) - 3) As String
+    Dim F As Integer
+    Dim Y As Integer
+    Dim s As String
+    For F = 0 To UBound(all_lines)
+        If F = 0 Or all_lines(F) = "" Then
+            'Do nothing
+        ElseIf F = 1 Then
+            one_line = Split(all_lines(F), ", ")
+            common.filesData(file_no).num_cols = UBound(one_line)
+            ReDim common.filesData(file_no).elements(0 To common.filesData(file_no).num_cols) As TheElement
+            For Y = 0 To UBound(one_line)
+                s = one_line(Y)
+                Call assignElement(Y, s, file_no)
+            Next Y
+        Else
+            lines(X) = all_lines(F)
+            X = X + 1
+        End If
+    Next F
+
+    ' Dimension the array.
+    common.filesData(file_no).num_rows = UBound(lines)
+    num_rows = UBound(lines)
+    one_line = Split(lines(0), ",")
+    common.filesData(file_no).num_cols = UBound(one_line)
+    num_cols = UBound(one_line)
+    ReDim common.filesData(file_no).the_array(num_rows, num_cols)
+
+    ' Copy the data into the array.
+    For R = 0 To num_rows
+        If Len(lines(R)) > 0 Then
+            one_line = Split(lines(R), ",")
+            For C = 0 To num_cols
+                common.filesData(file_no).the_array(R, C) = one_line(C)
+            Next C
+        End If
+    Next R
+    
+    ReDim common.filesData(file_no).xy(0 To 1, 0 To num_rows) As Double
+
+
+End Sub
+
+
+Private Sub assignElement(element_no As Integer, s As String, file_no As Integer)
+    If s = "Time" Then
+        common.filesData(file_no).elements(element_no) = Time
+    ElseIf s = "Latitude" Then
+        common.filesData(file_no).elements(element_no) = Latitude
+    ElseIf s = "Longitude" Then
+        common.filesData(file_no).elements(element_no) = Longitude
+    ElseIf s = "BatteryV" Then
+        common.filesData(file_no).elements(element_no) = BatteryV
+    ElseIf s = "AccelX" Then
+        common.filesData(file_no).elements(element_no) = AccelX
+    ElseIf s = "AccelY" Then
+        common.filesData(file_no).elements(element_no) = AccelY
+    ElseIf s = "AccelZ" Then
+        common.filesData(file_no).elements(element_no) = AccelZ
+    ElseIf s = "Temperature" Then
+        common.filesData(file_no).elements(element_no) = Temperature
+    ElseIf s = "Humidity" Then
+        common.filesData(file_no).elements(element_no) = Humidity
+    ElseIf s = "PhotocellIR" Then
+        common.filesData(file_no).elements(element_no) = PhotocellIR
+    ElseIf s = "PhotocellBlue" Then
+        common.filesData(file_no).elements(element_no) = PhotocellBlue
+    ElseIf s = "IAQPred" Then
+        common.filesData(file_no).elements(element_no) = IAQPred
+    ElseIf s = "IAQRes" Then
+        common.filesData(file_no).elements(element_no) = IAQRes
+    ElseIf s = "Gas1We" Then
+        common.filesData(file_no).elements(element_no) = Gas1We
+    ElseIf s = "Gas1Aux" Then
+        common.filesData(file_no).elements(element_no) = Gas1Aux
+    ElseIf s = "Gas2We" Then
+        common.filesData(file_no).elements(element_no) = Gas2We
+    ElseIf s = "Gas2Aux" Then
+        common.filesData(file_no).elements(element_no) = Gas2Aux
+    Else
+        Debug.Print "This element(" & s & ") is not available in file = " & common.theFiles(file_no)
+    End If
+    
+End Sub
+
+
+
+Private Sub view_Click(Index As Integer)
+    Select Case Index
+        Case 0
+            Gas.Show
+        Case 1
+            Acceleration.Show
+        Case 2
+            Light.Show
+        Case 3
+            TempHum.Show
+        Case 4
+            Sound.Show
+            
+    End Select
+End Sub
