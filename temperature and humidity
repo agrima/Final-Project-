@@ -1,0 +1,290 @@
+VERSION 5.00
+Object = "{5E7839C0-922F-11D0-B597-00A024A63F06}#1.0#0"; "StripS.ocx"
+Begin VB.Form TempHum 
+   Caption         =   "Temperature/Humidity Data"
+   ClientHeight    =   8670
+   ClientLeft      =   120
+   ClientTop       =   450
+   ClientWidth     =   15825
+   LinkTopic       =   "Form1"
+   MDIChild        =   -1  'True
+   ScaleHeight     =   8670
+   ScaleWidth      =   15825
+   Begin VB.Frame Frame2 
+      Caption         =   "Style"
+      Height          =   1455
+      Left            =   3360
+      TabIndex        =   7
+      Top             =   6120
+      Width           =   1455
+      Begin VB.CheckBox Check5 
+         Caption         =   "Line"
+         Height          =   255
+         Left            =   120
+         TabIndex        =   9
+         Top             =   360
+         Width           =   1215
+      End
+      Begin VB.CheckBox Check6 
+         Caption         =   "Point"
+         Height          =   255
+         Left            =   120
+         TabIndex        =   8
+         Top             =   840
+         Width           =   1095
+      End
+   End
+   Begin VB.CommandButton Command1 
+      Caption         =   "Export Data"
+      Height          =   495
+      Left            =   1320
+      TabIndex        =   6
+      Top             =   7800
+      Width           =   1695
+   End
+   Begin VB.TextBox Text1 
+      Height          =   375
+      Left            =   6480
+      TabIndex        =   5
+      Text            =   "3600"
+      Top             =   6240
+      Width           =   975
+   End
+   Begin VB.TextBox Text2 
+      Height          =   375
+      Left            =   6480
+      TabIndex        =   4
+      Text            =   "0"
+      Top             =   6840
+      Width           =   975
+   End
+   Begin VB.CommandButton Command2 
+      Caption         =   "OK"
+      Height          =   375
+      Left            =   6480
+      TabIndex        =   3
+      Top             =   7440
+      Width           =   975
+   End
+   Begin VB.Frame Frame1 
+      Caption         =   "Parameter"
+      Height          =   1455
+      Left            =   120
+      TabIndex        =   0
+      Top             =   6120
+      Width           =   3135
+      Begin VB.CheckBox Check2 
+         Caption         =   "Humidity"
+         Height          =   375
+         Left            =   240
+         TabIndex        =   2
+         Top             =   840
+         Width           =   1815
+      End
+      Begin VB.CheckBox Check1 
+         Caption         =   "Temperature"
+         Height          =   375
+         Left            =   240
+         TabIndex        =   1
+         Top             =   360
+         Width           =   1335
+      End
+   End
+   Begin STRIPLib.Strip Strip1 
+      Height          =   5775
+      Left            =   0
+      TabIndex        =   10
+      Top             =   0
+      Width           =   15615
+      _Version        =   131082
+      _Version        =   65536
+      _ExtentX        =   27543
+      _ExtentY        =   10186
+      _StockProps     =   71
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      AreaLeft        =   5.98377281947262E-02
+      AreaBottom      =   0.875661375661376
+      m_BackColor     =   12615680
+      DisplayMax      =   0
+      DisplayMin      =   -100
+      m_handles       =   2
+      m_lastX         =   0
+      Max             =   0
+      MaxBufferSize   =   3600
+      Min             =   -100
+      TicDelta        =   20
+      TicMin          =   -100
+      FontSize        =   2
+      BeginProperty Font0 {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      BeginProperty Font1 {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   12
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      CaptionSize     =   1
+      CaptionColor0   =   16777215
+      CaptionFontID0  =   1
+      Caption0        =   "Light Data"
+      CaptionX0       =   0.488394584139265
+      CaptionY0       =   0.044973544973545
+      CaptionVisible0 =   -1  'True
+      TrackBackColor0 =   12632256
+      TrackDisplayMax0=   3
+      TrackDisplayMin0=   -3
+      TrackMajorTics0 =   10
+      TrackMax0       =   3
+      TrackMin0       =   -3
+      BandSize0       =   1
+      TrackBandColor0_0=   12632256
+      TrackBandStart0_0=   -7
+      TrackBandStop0_0=   7
+      VariableSize    =   4
+      VariableColor0  =   32768
+      VariableLineWidth0=   2
+      VariableName1   =   "Variable"
+      VariableUnit1   =   "None"
+      VariableColor1  =   8388608
+      VariableLineWidth1=   2
+      VariableName2   =   "Variable"
+      VariableUnit2   =   "None"
+      VariableColor2  =   8388736
+      VariableLineWidth2=   2
+      VariableName3   =   "Variable"
+      VariableUnit3   =   "None"
+      VariableColor3  =   255
+      VariableLineWidth3=   2
+   End
+   Begin VB.Label Label1 
+      Caption         =   "X-Axis min"
+      Height          =   255
+      Left            =   5040
+      TabIndex        =   12
+      Top             =   6240
+      Width           =   1335
+   End
+   Begin VB.Label Label2 
+      Caption         =   "X-Axis max"
+      Height          =   255
+      Left            =   5040
+      TabIndex        =   11
+      Top             =   6840
+      Width           =   1335
+   End
+End
+Attribute VB_Name = "TempHum"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
+Option Explicit
+
+Private Sub Check1_Click()
+    Call constructChart
+End Sub
+
+Private Sub Check2_Click()
+    Call constructChart
+End Sub
+
+Private Sub Check3_Click()
+    Call constructChart
+End Sub
+
+Private Sub Check4_Click()
+    Call constructChart
+End Sub
+
+
+
+Private Sub Set_Yaxis()
+    Strip1.TrackMax = final_max_Y
+    Strip1.TrackMin = final_min_Y
+    Strip1.TrackDisplayMax = final_max_Y
+    Strip1.TrackDisplayMin = final_min_Y
+End Sub
+
+Private Sub constructChart()
+    Dim varray As Variant
+    
+    Strip1.ClearAll
+    If Check1.Value = 1 Then
+        Call common.addGraph(3, 0, Temperature)
+        varray = common.filesData(3).xy
+        Strip1.AddXYArray 0, varray
+    End If
+    If Check2.Value = 1 Then
+        Call common.addGraph(3, 1, Humidity)
+        varray = common.filesData(3).xy
+        Strip1.AddXYArray 1, varray
+    End If
+    
+    Call Set_Yaxis
+    Strip1.Redraw
+    Call Set_Yaxis
+End Sub
+
+Private Sub Check5_Click()
+    Dim i As Integer
+    If Check5.Value = 1 Then
+        For i = 0 To 3
+            Strip1.VariableID = i
+            Strip1.VariableLineWidth = 1
+        Next i
+    Else
+        For i = 0 To 3
+            Strip1.VariableID = i
+            Strip1.VariableLineWidth = 0
+        Next i
+    End If
+End Sub
+
+Private Sub Check6_Click()
+    Dim i As Integer
+    If Check6.Value = 1 Then
+        For i = 0 To 3
+            Strip1.VariableID = i
+            Strip1.VariableSymbol = CircleSymbol
+            Strip1.VariableSymbolSize = 0.009
+        Next i
+    Else
+        For i = 0 To 3
+            Strip1.VariableID = i
+            Strip1.VariableSymbol = NoSymbol
+            Strip1.VariableSymbolSize = 0.009
+        Next i
+    End If
+End Sub
+
+Private Sub Command2_Click()
+    If IsNumeric(Text1.Text) And IsNumeric(Text2.Text) Then
+        Call Strip1.SetDisplay(Text1.Text, Text2.Text)
+    End If
+End Sub
+
+Private Sub Form_Load()
+    common.final_max_Y = -1000000
+    common.final_min_Y = 1000000
+End Sub
+
+
+
